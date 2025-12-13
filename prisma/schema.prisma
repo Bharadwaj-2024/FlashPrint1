@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  FACULTY
+  OTHERS
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAYMENT_CONFIRMED
+  PRINTING
+  READY_FOR_DELIVERY
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PrintType {
+  BW
+  COLOR
+}
+
+enum PaperSize {
+  A4
+  A3
+  A5
+  LETTER
+  LEGAL
+}
+
+enum PrintSide {
+  SINGLE
+  DOUBLE
+}
+
+// NextAuth Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// User Model
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  phone         String?
+  role          UserRole  @default(STUDENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  address  Address?
+  orders   Order[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// Address Model (flexible for different user types)
+model Address {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  
+  // Address type
+  type            String   // Hostel, Department, Custom
+  
+  // Hostel specific
+  hostelName      String?
+  roomNumber      String?
+  
+  // Department specific
+  departmentName  String?
+  cabinNumber     String?
+  
+  // Custom location
+  buildingName    String?
+  floorNumber     String?
+  
+  // Common fields
+  landmark        String?
+  notes           String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("addresses")
+}
+
+// Order Model
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  userId          String
+  
+  // Order Status
+  status          OrderStatus   @default(PENDING)
+  
+  // Delivery Address (snapshot at order time)
+  deliveryAddress Json
+  
+  // Pricing
+  totalAmount     Float
+  
+  // Payment
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentId       String?
+  paymentMethod   String?       @default("UPI")
+  paidAt          DateTime?
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  estimatedDelivery DateTime?
+  deliveredAt     DateTime?
+  
+  // Relations
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
+  statusHistory   OrderStatusHistory[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+// Order Item (individual files in an order)
+model OrderItem {
+  id            String    @id @default(cuid())
+  orderId       String
+  
+  // File details
+  fileName      String
+  fileUrl       String
+  pageCount     Int
+  
+  // Print options
+  copies        Int       @default(1)
+  printType     PrintType @default(BW)
+  paperSize     PaperSize @default(A4)
+  printSide     PrintSide @default(SINGLE)
+  
+  // Calculated price
+  price         Float
+  
+  createdAt     DateTime  @default(now())
+  
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  @@index([orderId])
+  @@map("order_items")
+}
+
+// Order Status History (for tracking)
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  status    OrderStatus
+  notes     String?
+  changedBy String?     // User ID who changed the status
+  changedAt DateTime    @default(now())
+  
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  @@index([orderId])
+  @@index([changedAt])
+  @@map("order_status_history")
+}
+
+// Pricing Configuration
+model PricingConfig {
+  id                    String    @id @default("default")
+  bwPricePerPage        Float     @default(3)
+  colorPricePerPage     Float     @default(12)
+  doubleSidedDiscount   Float     @default(0)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("pricing_config")
+}

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: flashprint-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: flashprint
+      POSTGRES_PASSWORD: flashprint123
+      POSTGRES_DB: flashprint
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
