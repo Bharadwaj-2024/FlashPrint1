@@ -16,6 +16,8 @@ import {
   X,
   Truck,
   Bell,
+  FileSpreadsheet,
+  Home,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -34,9 +36,11 @@ const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/orders', label: 'All Orders', icon: FileText },
   { href: '/admin/deliveries', label: 'Deliveries', icon: Truck },
+  { href: '/admin/reports', label: 'Daily Reports', icon: FileSpreadsheet },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { href: '/dashboard', label: 'User Dashboard', icon: Home },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

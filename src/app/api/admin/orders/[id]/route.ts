@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { saveDailyOrdersToExcel } from '@/lib/excel-export';
 
 export async function GET(
   request: NextRequest,
@@ -148,6 +149,11 @@ export async function PATCH(
         prisma.orderStatusHistory.create({ data: entry })
       ),
     ]);
+
+    // Auto-save to daily Excel report (non-blocking)
+    saveDailyOrdersToExcel().catch(err => {
+      console.error('Failed to update daily Excel report:', err);
+    });
 
     return NextResponse.json(updatedOrder);
   } catch (error) {

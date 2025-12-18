@@ -85,6 +85,10 @@ const config: Config = {
     },
   },
   plugins: [require('tailwindcss-animate')],
+  // Performance optimizations
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
 };
 
 export default config;

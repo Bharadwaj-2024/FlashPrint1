@@ -6,7 +6,6 @@ import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload,
   FileText,
@@ -245,11 +244,7 @@ export default function NewOrderPage() {
 
       {/* Step 1: Upload Files */}
       {step === 1 && (
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-        >
+        <div>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -290,21 +285,14 @@ export default function NewOrderPage() {
               </div>
 
               {/* File List */}
-              <AnimatePresence>
-                {files.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
+              {files.length > 0 && (
+                  <div
                     className="mt-6 space-y-3"
                   >
                     <h4 className="font-medium text-gray-700">Uploaded Files ({files.length})</h4>
                     {files.map((file) => (
-                      <motion.div
+                      <div
                         key={file.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
                         className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
@@ -328,11 +316,10 @@ export default function NewOrderPage() {
                         >
                           <X className="h-5 w-5 text-gray-500" />
                         </Button>
-                      </motion.div>
+                      </div>
                     ))}
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
 
               {files.length > 0 && (
                 <div className="mt-6 flex justify-end">
@@ -344,15 +331,12 @@ export default function NewOrderPage() {
               )}
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       )}
 
       {/* Step 2: Print Options */}
       {step === 2 && (
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+        <div
           className="space-y-4"
         >
           {files.map((file, index) => (
@@ -495,16 +479,12 @@ export default function NewOrderPage() {
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Step 3: Review & Pay */}
       {step === 3 && (
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-        >
+        <div>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -590,7 +570,7 @@ export default function NewOrderPage() {
               )}
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

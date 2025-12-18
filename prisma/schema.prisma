@@ -238,8 +238,46 @@ model PricingConfig {
   bwPricePerPage        Float     @default(3)
   colorPricePerPage     Float     @default(12)
   doubleSidedDiscount   Float     @default(0)
+  bwCostPerPage         Float     @default(1)     // Cost to owner per B&W page
+  colorCostPerPage      Float     @default(5)     // Cost to owner per color page
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
   @@map("pricing_config")
+}
+
+// Daily Expenses (for owner tracking)
+model DailyExpense {
+  id          String    @id @default(cuid())
+  date        DateTime  @db.Date
+  category    String    // "paper", "ink", "electricity", "maintenance", "salary", "other"
+  description String?
+  amount      Float
+  createdBy   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([date, category, description])
+  @@index([date])
+  @@map("daily_expenses")
+}
+
+// Daily Report Snapshots (for historical data)
+model DailyReport {
+  id              String    @id @default(cuid())
+  date            DateTime  @unique @db.Date
+  totalOrders     Int
+  totalCopies     Int
+  totalPages      Int
+  bwPages         Int
+  colorPages      Int
+  grossRevenue    Float     // Amount collected from customers
+  productionCost  Float     // Cost of paper/ink
+  otherExpenses   Float     // Daily expenses added
+  netProfit       Float     // Gross - Production - Other
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([date])
+  @@map("daily_reports")
 }

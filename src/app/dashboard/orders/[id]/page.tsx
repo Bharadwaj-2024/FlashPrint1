@@ -3,7 +3,6 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   FileText,
@@ -146,17 +145,15 @@ export default function OrderDetailsPage() {
 
               return (
                 <div key={step.status} className="flex flex-col items-center z-10">
-                  <motion.div
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: isCurrent ? 1.1 : 1 }}
+                  <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center ${
                       isCompleted
                         ? 'bg-primary text-white'
                         : 'bg-gray-200 text-gray-500'
-                    }`}
+                    } ${isCurrent ? 'scale-110' : ''}`}
                   >
                     <StatusIcon className="h-5 w-5" />
-                  </motion.div>
+                  </div>
                   <span
                     className={`text-xs mt-2 text-center max-w-[80px] ${
                       isCompleted ? 'text-primary font-medium' : 'text-gray-500'

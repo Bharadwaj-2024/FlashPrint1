@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import QRCode from 'qrcode';
-import { motion } from 'framer-motion';
 import {
   CreditCard,
   Smartphone,
@@ -160,13 +159,9 @@ export default function PaymentPage() {
   if (order.paymentStatus === 'COMPLETED') {
     return (
       <div className="max-w-md mx-auto text-center py-16">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', duration: 0.5 }}
-        >
+        <div>
           <CheckCircle2 className="h-20 w-20 text-green-500 mx-auto mb-4" />
-        </motion.div>
+        </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Already Completed</h2>
         <p className="text-gray-600 mb-6">This order has already been paid for.</p>
         <Link href={`/dashboard/orders/${orderId}`}>
@@ -191,10 +186,7 @@ export default function PaymentPage() {
       </div>
 
       {paymentStatus === 'success' ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
+        <div>
           <Card className="border-green-200 bg-green-50">
             <CardContent className="pt-6 text-center">
               <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
@@ -205,7 +197,7 @@ export default function PaymentPage() {
               <p className="text-sm text-green-600">Redirecting to order details...</p>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {/* QR Code Section */}

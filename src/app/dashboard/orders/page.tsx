@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import {
   FileText,
   Search,
@@ -124,12 +123,7 @@ export default function OrdersPage() {
       ) : filteredOrders?.length > 0 ? (
         <div className="space-y-4">
           {filteredOrders.map((order: any, index: number) => (
-            <motion.div
-              key={order.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
+            <div key={order.id}>
               <Card className="hover:shadow-md transition-shadow">
                 <CardContent className="pt-6">
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -170,7 +164,7 @@ export default function OrdersPage() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))}
 
           {/* Pagination */}
